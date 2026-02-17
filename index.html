@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>جزوه ساز مدرن پرو (متصل به گوگل)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    
+    <style>
+        :root {
+            /* Light Mode Variables (Default) */
+            --primary-color: #009688;
+            --primary-dark: #00796b;
+            --accent-color: #3f51b5;
+            --bg-app: #f0f4f8;
+            --bg-surface: #ffffff;
+            --text-primary: #263238;
+            --text-secondary: #546e7a;
+            --star-color: #ffc107;
+            --danger-color: #ff5252;
+            --highlight-color: #fff59d;
+            --border-radius: 16px;
+            --shadow-soft: 0 4px 20px rgba(0,0,0,0.08);
+            --header-gradient: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            --input-bg: #ffffff;
+            --border-color: #eeeeee;
+        }
+
+        /* Dark Mode Variables */
+        [data-theme="dark"] {
+            --primary-color: #26a69a;
+            --primary-dark: #004d40;
+            --accent-color: #7986cb;
+            --bg-app: #121212;
+            --bg-surface: #1e1e1e;
+            --text-primary: #e0e0e0;
+            --text-secondary: #b0bec5;
+            --highlight-color: #fbc02d;
+            --shadow-soft: 0 4px 20px rgba(0,0,0,0.3);
+            --header-gradient: linear-gradient(135deg, #004d40, #1a237e);
+            --input-bg: #2c2c2c;
+            --border-color: #333333;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            outline: none;
+            font-family: 'Vazirmatn', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-app);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+            color: var(--text-primary);
+            transition: background-color 0.3s;
+        }
+
+        /* --- Sidebar --- */
+        #sidebar {
+            width: 300px;
+            background: var(--bg-surface);
+            height: 100%;
+            position: fixed;
+            right: -300px;
+            top: 0;
+            z-index: 1000;
+            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        #sidebar.active { right: 0; }
+
+        .sidebar-header {
+            padding: 25px 20px;
+            background: var(--header-gradient);
+            color: white;
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 1.2rem; font-weight: bold;
+        }
+
+        /* User Profile Section */
+        #user-profile-section {
+            padding: 15px;
+            background: var(--bg-surface);
+            border-bottom: 1px solid var(--border-color);
+            text-align: center;
+        }
+        .user-avatar {
+            width: 50px; height: 50px; border-radius: 50%;
+            margin-bottom: 10px; border: 2px solid var(--primary-color);
+        }
+        .login-btn {
+            background: #4285F4; color: white; border: none;
+            padding: 8px 15px; border-radius: 20px; cursor: pointer;
+            font-size: 0.9rem; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .login-btn:hover { background: #357ae8; }
+        .logout-btn {
+            background: var(--bg-app); color: var(--danger-color); border: 1px solid var(--border-color);
+            padding: 5px 10px; border-radius: 10px; cursor: pointer; font-size: 0.8rem; margin-top: 5px;
+        }
+
+        .pamphlet-list { flex: 1; overflow-y: auto; padding: 15px; }
+        
+        .pamphlet-item {
+            padding: 12px 15px; margin-bottom: 10px;
+            background: var(--bg-app); border-radius: 12px;
+            cursor: pointer; transition: all 0.2s ease;
+            display: flex; justify-content: space-between; align-items: center;
+            border-right: 3px solid transparent;
+            color: var(--text-primary);
+        }
+        .pamphlet-item:hover { background: rgba(0,0,0,0.05); }
+        .pamphlet-item.active {
+            background: var(--bg-surface); border-right-color: var(--accent-color);
+            box-shadow: 0 2px 8px rgba(63, 81, 181, 0.15);
+            font-weight: bold; color: var(--accent-color);
+            border: 1px solid var(--border-color);
+        }
+        
+        .theme-toggle-container {
+            padding: 15px 20px;
+            border-top: 1px solid var(--border-color);
+            display: flex; justify-content: space-between; align-items: center;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        .add-pamphlet-btn {
+            padding: 20px; background: var(--bg-surface); color: var(--primary-color);
+            text-align: center; cursor: pointer; font-weight: bold;
+            border-top: 1px solid var(--border-color); transition: 0.2s;
+        }
+        .add-pamphlet-btn:hover { background: rgba(0,0,0,0.05); }
+
+        #overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(2px);
+            z-index: 999; display: none; opacity: 0; transition: opacity 0.3s ease;
+        }
+        #overlay.active { display: block; opacity: 1; }
+
+        /* --- Main Content --- */
+        #main-container { flex: 1; display: flex; flex-direction: column; height: 100%; width: 100%; }
+
+        header {
+            height: 60px; background: var(--header-gradient); color: white;
+            display: flex; align-items: center; padding: 0 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 100;
+        }
+        .header-btn {
+            background: rgba(255,255,255,0.2); border: none; color: white;
+            width: 40px; height: 40px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; cursor: pointer; transition: 0.2s;
+        }
+        .header-btn:hover { background: rgba(255,255,255,0.3); }
+        .header-title { flex: 1; text-align: center; font-weight: 900; font-size: 1.1rem; }
+        .cloud-status { font-size: 0.7rem; opacity: 0.8; margin-right: 5px; }
+
+        /* --- Search Bar --- */
+        .search-container {
+            padding: 10px 15px;
+            background: var(--bg-app);
+            position: relative;
+        }
+        .search-box {
+            display: flex; align-items: center;
+            background: var(--bg-surface);
+            border-radius: 50px;
+            padding: 5px 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+        }
+        .search-box input {
+            border: none; background: transparent; flex: 1;
+            padding: 8px; font-size: 0.95rem; color: var(--text-primary);
+        }
+        .search-box i { color: var(--text-secondary); }
+
+        /* --- Notes Area --- */
+        #notes-area {
+            flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 200px;
+            display: flex; flex-direction: column; gap: 12px;
+            background-image: radial-gradient(var(--text-secondary) 0.5px, transparent 0.5px);
+            background-size: 24px 24px; background-color: var(--bg-app);
+            scroll-behavior: smooth;
+        }
+
+        .note-card {
+            background: var(--bg-surface); padding: 12px 15px;
+            border-radius: 12px; box-shadow: var(--shadow-soft);
+            position: relative; border-right: 4px solid var(--text-secondary);
+            cursor: grab; animation: slideIn 0.3s ease forwards;
+            transition: background 0.3s, border-color 0.3s;
+        }
+        .note-card.starred { border-right-color: var(--star-color); background: var(--bg-surface); }
+        
+        @keyframes slideIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        .note-header-compact {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 6px; font-size: 0.75rem; color: var(--text-secondary);
+        }
+        .note-meta { background: var(--bg-app); padding: 2px 8px; border-radius: 8px; opacity: 0.8; }
+        .note-actions-compact { display: flex; gap: 10px; }
+        .note-actions-compact i { cursor: pointer; padding: 3px; font-size: 0.9rem; transition: 0.2s; opacity: 0.6; }
+        .note-actions-compact i:hover { opacity: 1; transform: scale(1.2); }
+        .note-actions-compact i.fa-star.active { color: var(--star-color); opacity: 1; }
+        .note-actions-compact i.fa-trash:hover { color: var(--danger-color); }
+
+        .note-content {
+            line-height: 1.7; font-size: 1rem; color: var(--text-primary);
+            overflow-wrap: break-word;
+        }
+        
+        .note-content b { font-weight: 900; color: var(--text-primary); }
+        .note-content mark { background-color: var(--highlight-color); padding: 0 4px; border-radius: 4px; color: #000; }
+        .note-content ul, .note-content ol { margin-right: 25px; margin-bottom: 5px; }
+        
+        .attachment-container {
+            margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border-color);
+        }
+        .media-embed { max-width: 100%; border-radius: 8px; margin-top: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .file-attachment {
+            display: flex; align-items: center; background: var(--bg-app); padding: 8px;
+            border-radius: 8px; text-decoration: none; color: var(--text-primary);
+            margin-top: 5px; transition: 0.2s; font-size: 0.9rem;
+        }
+        .file-attachment:hover { background: rgba(0,0,0,0.1); }
+        .file-icon { margin-left: 10px; color: var(--accent-color); }
+
+        /* --- Advanced Input Area --- */
+        #input-wrapper {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: var(--bg-surface);
+            box-shadow: 0 -5px 25px rgba(0,0,0,0.1);
+            z-index: 200;
+            border-top-left-radius: 20px; border-top-right-radius: 20px;
+            padding: 10px 15px 15px 15px;
+            display: flex; flex-direction: column; gap: 8px;
+            transition: background 0.3s;
+        }
+
+        .toolbar {
+            display: flex; gap: 8px; padding: 0 5px; overflow-x: auto;
+            align-items: center; padding-bottom: 5px;
+        }
+        .tool-btn {
+            background: transparent; border: none; color: var(--text-secondary);
+            cursor: pointer; font-size: 0.95rem; padding: 5px 8px;
+            border-radius: 6px; transition: 0.2s;
+        }
+        .tool-btn:hover { background: var(--bg-app); color: var(--primary-color); }
+        
+        .divider { width: 1px; height: 18px; background: var(--border-color); margin: 0 5px; }
+
+        .input-row { display: flex; align-items: flex-end; gap: 8px; }
+
+        #rich-input {
+            flex: 1;
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 10px 15px;
+            font-size: 1rem;
+            max-height: 120px; min-height: 45px;
+            background: var(--input-bg);
+            color: var(--text-primary);
+            overflow-y: auto;
+            transition: 0.3s;
+        }
+        #rich-input:focus { border-color: var(--primary-color); }
+        #rich-input:empty:before { content: attr(placeholder); color: var(--text-secondary); pointer-events: none; display: block; }
+
+        #send-btn {
+            background: var(--primary-color); color: white; border: none;
+            width: 45px; height: 45px; border-radius: 50%;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; transition: 0.3s; flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        #send-btn:hover { transform: scale(1.1) rotate(-10deg); background: var(--primary-dark); }
+        
+        #attach-btn {
+            background: var(--bg-app); color: var(--text-secondary); border: none;
+            width: 45px; height: 45px; border-radius: 50%;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; transition: 0.2s; flex-shrink: 0;
+        }
+        #attach-btn:hover { color: var(--accent-color); background: rgba(0,0,0,0.08); }
+
+        /* --- Scroll Buttons --- */
+        .scroll-buttons {
+            position: fixed; bottom: 140px; left: 15px; z-index: 190;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .scroll-btn {
+            width: 35px; height: 35px; background: var(--bg-surface);
+            color: var(--primary-color); border: 1px solid var(--border-color);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.15); transition: 0.2s; opacity: 0.8;
+        }
+        .scroll-btn:hover { opacity: 1; transform: scale(1.1); background: var(--primary-color); color: white; }
+
+        /* --- Modal --- */
+        .modal {
+            display: none; position: fixed; z-index: 2000; left: 0; top: 0;
+            width: 100%; height: 100%; background-color: rgba(0,0,0,0.6);
+            align-items: center; justify-content: center; backdrop-filter: blur(3px);
+        }
+        .modal-content {
+            background-color: var(--bg-surface); padding: 30px; border-radius: 20px;
+            width: 85%; max-width: 380px; text-align: center;
+            box-shadow: var(--shadow-soft); color: var(--text-primary);
+        }
+        .modal input {
+            width: 100%; padding: 12px; margin-bottom: 20px;
+            border: 2px solid var(--bg-app); border-radius: 10px; font-size: 1rem; text-align: center;
+            background: var(--input-bg); color: var(--text-primary);
+        }
+        .modal-buttons { display: flex; justify-content: center; gap: 15px; }
+        .btn { padding: 10px 25px; border-radius: 50px; border: none; cursor: pointer; font-weight: bold; }
+        .btn-primary { background: var(--primary-color); color: white; }
+        .btn-secondary { background: var(--bg-app); color: var(--text-secondary); }
+
+        /* --- Loading Spinner --- */
+        .loading-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 3000; display: none;
+            justify-content: center; align-items: center; color: white; flex-direction: column;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3; border-top: 4px solid var(--primary-color);
+            border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* --- Print / PDF Styles --- */
+        @media print {
+            body { background: white; height: auto; overflow: visible; }
+            #sidebar, #overlay, #input-wrapper, header, .note-actions-compact, .add-pamphlet-btn, .search-container, .scroll-buttons { display: none !important; }
+            #main-container { height: auto; width: 100%; display: block; }
+            #notes-area {
+                padding: 0; margin: 0; overflow: visible; height: auto;
+                background: white; display: block;
+            }
+            .note-card {
+                box-shadow: none; border: 1px solid #ddd;
+                border-right: 5px solid var(--primary-color) !important;
+                break-inside: avoid; page-break-inside: avoid;
+                margin-bottom: 15px; color: black;
+            }
+            .note-content { font-size: 12pt; color: black; }
+            .note-header-compact { display: none; }
+            #notes-area::before {
+                content: "جزوه: " attr(data-print-title);
+                display: block; font-size: 18pt; font-weight: bold;
+                text-align: center; margin-bottom: 20px; padding-bottom: 10px;
+                border-bottom: 2px solid #333; color: black;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="overlay"></div>
+    <div id="loading" class="loading-overlay">
+        <div class="spinner"></div>
+        <div style="margin-top:10px;">درحال ارتباط با سرور...</div>
+    </div>
+
+    <div id="sidebar">
+        <div class="sidebar-header">
+            <span><i class="fas fa-book-open margin-left-10"></i> کتابخانه جزوات</span>
+            <i class="fas fa-times" style="cursor:pointer;" id="close-sidebar-btn"></i>
+        </div>
+
+        <div id="user-profile-section">
+            <div id="logged-out-view">
+                <button class="login-btn" id="google-login-btn">
+                    <i class="fab fa-google"></i> ورود با گوگل
+                </button>
+                <div style="font-size: 0.75rem; margin-top: 5px; color: var(--text-secondary);">برای ذخیره ابری وارد شوید</div>
+            </div>
+            <div id="logged-in-view" style="display: none;">
+                <img src="" class="user-avatar" id="user-avatar">
+                <div id="user-name" style="font-weight: bold; font-size: 0.9rem;"></div>
+                <button class="logout-btn" id="logout-btn">خروج از حساب</button>
+            </div>
+        </div>
+        
+        <div class="theme-toggle-container" id="theme-toggle-btn">
+            <span><i class="fas fa-adjust"></i> حالت شب/روز</span>
+            <i class="fas fa-toggle-on" id="theme-icon"></i>
+        </div>
+
+        <div class="pamphlet-list" id="pamphlet-list-container"></div>
+        <div class="add-pamphlet-btn" id="create-pamphlet-btn">
+            <i class="fas fa-plus-circle"></i> ایجاد جزوه جدید
+        </div>
+    </div>
+
+    <div id="main-container">
+        <header>
+            <button class="header-btn" id="menu-btn"><i class="fas fa-bars"></i></button>
+            <div class="header-title">
+                <span id="current-pamphlet-title">درحال بارگذاری...</span>
+                <span id="cloud-status-indicator" class="cloud-status"></span>
+            </div>
+            <button class="header-btn" title="ذخیره به عنوان PDF" id="print-btn">
+                <i class="fas fa-print"></i>
+            </button>
+        </header>
+
+        <div class="search-container">
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="جستجو در متن یا شماره نکته...">
+                <i class="fas fa-search"></i>
+            </div>
+        </div>
+
+        <div id="notes-area" data-print-title=""></div>
+        
+        <div class="scroll-buttons">
+            <div class="scroll-btn" onclick="scrollToPos('top')"><i class="fas fa-arrow-up"></i></div>
+            <div class="scroll-btn" onclick="scrollToPos('bottom')"><i class="fas fa-arrow-down"></i></div>
+        </div>
+
+        <div id="input-wrapper">
+            <div class="toolbar">
+                <button class="tool-btn" onclick="formatDoc('bold')" title="پررنگ"><i class="fas fa-bold"></i></button>
+                <button class="tool-btn" onclick="formatDoc('underline')" title="زیرخط"><i class="fas fa-underline"></i></button>
+                <button class="tool-btn" onclick="formatDoc('hiliteColor', '#fff59d')" title="هایلایت"><i class="fas fa-highlighter"></i></button>
+                <div class="divider"></div>
+                <button class="tool-btn" onclick="formatDoc('insertUnorderedList')" title="لیست"><i class="fas fa-list-ul"></i></button>
+                <button class="tool-btn" onclick="formatDoc('insertOrderedList')" title="شماره‌گذاری"><i class="fas fa-list-ol"></i></button>
+            </div>
+            
+            <div class="input-row">
+                <button id="attach-btn" title="افزودن فایل"><i class="fas fa-paperclip"></i></button>
+                <input type="file" id="file-input" style="display: none;" accept="image/*,audio/*,.pdf,.doc,.docx">
+                
+                <div id="rich-input" contenteditable="true" placeholder="نکته خود را اینجا بنویسید..."></div>
+                
+                <button id="send-btn"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div id="newPamphletModal" class="modal">
+        <div class="modal-content">
+            <h3><i class="fas fa-pen-fancy"></i> نام جزوه جدید</h3>
+            <input type="text" id="newPamphletName" placeholder="مثلا: فیزیک کوانتوم">
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" id="cancel-modal-btn">لغو</button>
+                <button class="btn btn-primary" id="confirm-modal-btn">ساختن</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Your Config
+        const firebaseConfig = {
+          apiKey: "AIzaSyCk3ZmtjSup9-Nub3xiSpD34Jks84TdZFc",
+          authDomain: "jozver-ultra.firebaseapp.com",
+          projectId: "jozver-ultra",
+          storageBucket: "jozver-ultra.firebasestorage.app",
+          messagingSenderId: "500738538243",
+          appId: "1:500738538243:web:ac728599dca9c26df70736",
+          measurementId: "G-B70DH77G1Z"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const provider = new GoogleAuthProvider();
+
+        // Expose functions to window
+        window.firebaseAuth = auth;
+        window.firebaseDb = db;
+        
+        // Login Logic
+        document.getElementById('google-login-btn').addEventListener('click', async () => {
+            try {
+                await signInWithPopup(auth, provider);
+            } catch (error) {
+                console.error("Login Failed", error);
+                alert("ورود ناموفق بود. لطفا بررسی کنید که روی لوکال هاست یا دامنه تایید شده هستید.");
+            }
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            signOut(auth);
+            location.reload();
+        });
+
+        // Auth State Listener
+        onAuthStateChanged(auth, async (user) => {
+            const loggedInView = document.getElementById('logged-in-view');
+            const loggedOutView = document.getElementById('logged-out-view');
+            const statusIndicator = document.getElementById('cloud-status-indicator');
+            const loading = document.getElementById('loading');
+
+            if (user) {
+                // UI Changes
+                loggedOutView.style.display = 'none';
+                loggedInView.style.display = 'block';
+                document.getElementById('user-name').innerText = user.displayName;
+                document.getElementById('user-avatar').src = user.photoURL;
+                statusIndicator.innerHTML = '<i class="fas fa-cloud"></i> آنلاین';
+                statusIndicator.style.color = '#4caf50';
+
+                // Load Data from Cloud
+                loading.style.display = 'flex';
+                try {
+                    const docRef = doc(db, "users", user.uid);
+                    const docSnap = await getDoc(docRef);
+                    
+                    if (docSnap.exists()) {
+                        const cloudData = docSnap.data().appData;
+                        // Ask user if they want to merge or replace? For simplicity, we replace global data
+                        // But we respect theme preference from local if possible
+                        window.loadAppData(cloudData);
+                    } else {
+                        // First time user in cloud, save current local data to cloud
+                        window.saveDataToCloud();
+                    }
+                } catch(e) {
+                    console.error("Error loading cloud data", e);
+                } finally {
+                    loading.style.display = 'none';
+                }
+
+            } else {
+                loggedOutView.style.display = 'block';
+                loggedInView.style.display = 'none';
+                statusIndicator.innerHTML = '<i class="fas fa-hdd"></i> آفلاین';
+                statusIndicator.style.color = '#ff9800';
+            }
+        });
+
+        // Bridge to connect main script to Firebase
+        window.saveDataToCloud = async () => {
+            const user = auth.currentUser;
+            if (user && window.appData) {
+                const statusIndicator = document.getElementById('cloud-status-indicator');
+                statusIndicator.innerHTML = '<i class="fas fa-sync fa-spin"></i>';
+                try {
+                    await setDoc(doc(db, "users", user.uid), {
+                        appData: window.appData,
+                        lastUpdated: new Date()
+                    });
+                    statusIndicator.innerHTML = '<i class="fas fa-cloud"></i> آنلاین';
+                } catch (e) {
+                    console.error("Save Error", e);
+                    statusIndicator.innerHTML = '<i class="fas fa-exclamation-triangle"></i> خطا';
+                }
+            }
+        };
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            window.appData = { currentId: null, pamphlets: [], theme: 'light' };
+            let sortableInstance = null;
+
+            // DOM Elements
+            const els = {
+                richInput: document.getElementById('rich-input'),
+                sendBtn: document.getElementById('send-btn'),
+                attachBtn: document.getElementById('attach-btn'),
+                fileInput: document.getElementById('file-input'),
+                notesArea: document.getElementById('notes-area'),
+                sidebar: document.getElementById('sidebar'),
+                overlay: document.getElementById('overlay'),
+                pamphletList: document.getElementById('pamphlet-list-container'),
+                currentTitle: document.getElementById('current-pamphlet-title'),
+                menuBtn: document.getElementById('menu-btn'),
+                closeSidebarBtn: document.getElementById('close-sidebar-btn'),
+                printBtn: document.getElementById('print-btn'),
+                createPamphletBtn: document.getElementById('create-pamphlet-btn'),
+                modal: document.getElementById('newPamphletModal'),
+                modalInput: document.getElementById('newPamphletName'),
+                cancelModalBtn: document.getElementById('cancel-modal-btn'),
+                confirmModalBtn: document.getElementById('confirm-modal-btn'),
+                searchInput: document.getElementById('search-input'),
+                themeToggle: document.getElementById('theme-toggle-btn'),
+            };
+
+            // Global Load Function (Called by Firebase or LocalStorage)
+            window.loadAppData = (data) => {
+                if (data) {
+                    window.appData = data;
+                } else {
+                    // Fallback to local storage if no data passed
+                    try {
+                        const saved = localStorage.getItem('jozveSazPro_v3');
+                        if (saved) window.appData = JSON.parse(saved);
+                    } catch (e) {}
+                }
+
+                if (!window.appData.pamphlets) window.appData.pamphlets = [];
+                
+                // Integrity Check
+                if (window.appData.pamphlets.length === 0) createNewPamphletInternal("جزوه نمونه");
+                if (!window.appData.pamphlets.find(p => p.id === window.appData.currentId)) {
+                     window.appData.currentId = window.appData.pamphlets[0]?.id || null;
+                }
+                
+                // Apply Theme
+                if(window.appData.theme === 'dark') {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                } else {
+                    document.documentElement.removeAttribute('data-theme');
+                }
+                
+                renderApp();
+            }
+
+            // Save Function
+            function saveData() {
+                // 1. Save Local
+                try {
+                    localStorage.setItem('jozveSazPro_v3', JSON.stringify(window.appData));
+                } catch (e) {
+                    console.log("Local Storage Full");
+                }
+                
+                // 2. Save Cloud (If Logged In)
+                if(window.saveDataToCloud) window.saveDataToCloud();
+            }
+
+            function getCurrentPamphlet() { return window.appData.pamphlets.find(p => p.id === window.appData.currentId); }
+
+            // --- Render Functions ---
+            function renderApp() {
+                renderSidebar();
+                renderNotes();
+            }
+
+            function renderSidebar() {
+                els.pamphletList.innerHTML = '';
+                window.appData.pamphlets.forEach(p => {
+                    const div = document.createElement('div');
+                    div.className = `pamphlet-item ${p.id === window.appData.currentId ? 'active' : ''}`;
+                    div.innerHTML = `<span>${p.name}</span>`;
+                    div.onclick = () => switchPamphlet(p.id);
+
+                    if (window.appData.pamphlets.length > 1) {
+                        const del = document.createElement('i');
+                        del.className = 'fas fa-trash delete-pamphlet';
+                        del.onclick = (e) => { e.stopPropagation(); deletePamphlet(p.id); };
+                        div.appendChild(del);
+                    }
+                    els.pamphletList.appendChild(div);
+                });
+            }
+
+            function renderNotes(filterText = '') {
+                const pamphlet = getCurrentPamphlet();
+                if (!pamphlet) {
+                    els.currentTitle.innerText = "خالی";
+                    els.notesArea.innerHTML = '';
+                    return;
+                }
+
+                els.currentTitle.innerText = pamphlet.name;
+                els.notesArea.setAttribute('data-print-title', pamphlet.name);
+                els.notesArea.innerHTML = '';
+
+                let notesToRender = pamphlet.notes.map((note, idx) => ({ ...note, originalIndex: idx }));
+
+                if (filterText) {
+                    const term = filterText.toLowerCase();
+                    notesToRender = notesToRender.filter((n, i) => 
+                        n.text.toLowerCase().includes(term) || 
+                        (i + 1).toString().includes(term)
+                    );
+                }
+
+                notesToRender.sort((a, b) => (b.starred === true ? 1 : 0) - (a.starred === true ? 1 : 0));
+
+                if (notesToRender.length === 0) {
+                    els.notesArea.innerHTML = '<div style="text-align:center; color:var(--text-secondary); margin-top:50px;">موردی یافت نشد...</div>';
+                } else {
+                    notesToRender.forEach((note) => {
+                        els.notesArea.appendChild(createNoteCard(note, note.originalIndex));
+                    });
+                }
+
+                if (sortableInstance) sortableInstance.destroy();
+                
+                if(!filterText) {
+                    sortableInstance = new Sortable(els.notesArea, {
+                        animation: 200, handle: '.note-card', ghostClass: 'sortable-ghost',
+                        delay: 150, delayOnTouchOnly: true,
+                        onEnd: function (evt) {
+                            const p = getCurrentPamphlet();
+                            const item = p.notes.splice(evt.oldIndex, 1)[0];
+                            p.notes.splice(evt.newIndex, 0, item);
+                            saveData();
+                            renderNotes(); 
+                        }
+                    });
+                }
+            }
+
+            function createNoteCard(note, index) {
+                const div = document.createElement('div');
+                div.className = `note-card ${note.starred ? 'starred' : ''}`;
+                
+                let attachmentsHtml = '';
+                if(note.attachments && note.attachments.length > 0) {
+                    attachmentsHtml = '<div class="attachment-container">';
+                    note.attachments.forEach(att => {
+                        if(att.type.startsWith('image/')) {
+                            attachmentsHtml += `<img src="${att.data}" class="media-embed">`;
+                        } else if(att.type.startsWith('audio/')) {
+                            attachmentsHtml += `<audio controls src="${att.data}" style="width:100%; margin-top:5px;"></audio>`;
+                        } else {
+                            attachmentsHtml += `<a href="${att.data}" download="${att.name}" class="file-attachment"><i class="fas fa-file-alt file-icon"></i> ${att.name}</a>`;
+                        }
+                    });
+                    attachmentsHtml += '</div>';
+                }
+
+                div.innerHTML = `
+                    <div class="note-header-compact">
+                        <span class="note-meta">#${index + 1}</span>
+                        <div class="note-actions-compact">
+                            <i class="fas fa-star ${note.starred ? 'active' : ''}" onclick="window.toggleStar('${note.id}')" title="مهم"></i>
+                            <i class="fas fa-trash" onclick="window.deleteNote('${note.id}')" title="حذف"></i>
+                        </div>
+                    </div>
+                    <div class="note-content" contenteditable="true" onblur="window.updateNote('${note.id}', this.innerHTML)">
+                        ${note.text}
+                    </div>
+                    ${attachmentsHtml}
+                `;
+                return div;
+            }
+
+            // --- Features Logic ---
+            
+            els.searchInput.addEventListener('input', (e) => { renderNotes(e.target.value); });
+
+            window.scrollToPos = (pos) => {
+                if(pos === 'top') els.notesArea.scrollTop = 0;
+                else els.notesArea.scrollTop = els.notesArea.scrollHeight;
+            };
+
+            els.themeToggle.addEventListener('click', () => {
+                if(document.documentElement.getAttribute('data-theme') === 'dark') {
+                    document.documentElement.removeAttribute('data-theme');
+                    window.appData.theme = 'light';
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    window.appData.theme = 'dark';
+                }
+                saveData();
+            });
+
+            window.formatDoc = (cmd, value = null) => {
+                document.execCommand(cmd, false, value);
+                els.richInput.focus();
+            };
+
+            function addNote(attachments = []) {
+                const content = els.richInput.innerHTML;
+                const hasText = els.richInput.innerText.trim().length > 0;
+                const hasAttach = attachments.length > 0;
+
+                if (!hasText && !hasAttach && !content.includes('img')) return;
+
+                const pamphlet = getCurrentPamphlet();
+                if(pamphlet) {
+                    pamphlet.notes.push({
+                        id: Date.now().toString(),
+                        text: content,
+                        attachments: attachments,
+                        starred: false
+                    });
+                    saveData();
+                    els.richInput.innerHTML = '';
+                    renderNotes(els.searchInput.value);
+                    if(!els.searchInput.value) scrollToPos('bottom');
+                    els.richInput.focus();
+                }
+            }
+
+            els.attachBtn.addEventListener('click', () => els.fileInput.click());
+            
+            els.fileInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const file = this.files[0];
+                    if (file.size > 500 * 1024) {
+                        alert("حجم فایل برای ذخیره ابری بهتر است کم باشد.");
+                        this.value = '';
+                        return;
+                    }
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const attachment = { type: file.type, name: file.name, data: e.target.result };
+                        addNote([attachment]);
+                        els.fileInput.value = '';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            els.sendBtn.addEventListener('click', () => addNote());
+
+            window.updateNote = (id, newHtml) => {
+                const p = getCurrentPamphlet();
+                const n = p.notes.find(x => x.id === id);
+                if(n) { n.text = newHtml; saveData(); }
+            };
+
+            window.deleteNote = (id) => {
+                if(!confirm('حذف شود؟')) return;
+                const p = getCurrentPamphlet();
+                p.notes = p.notes.filter(x => x.id !== id);
+                saveData();
+                renderNotes(els.searchInput.value);
+            };
+
+            window.toggleStar = (id) => {
+                const p = getCurrentPamphlet();
+                const n = p.notes.find(x => x.id === id);
+                if(n) { 
+                    n.starred = !n.starred; 
+                    saveData(); 
+                    renderNotes(els.searchInput.value); 
+                }
+            };
+
+            els.printBtn.addEventListener('click', () => {
+                alert("در پنجره باز شده، در قسمت Destination گزینه 'Save as PDF' را انتخاب کنید.");
+                window.print();
+            });
+
+            function switchPamphlet(id) {
+                window.appData.currentId = id; saveData(); 
+                els.searchInput.value = ''; 
+                renderApp(); toggleSidebar(false);
+            }
+            function deletePamphlet(id) {
+                if(!confirm('کل جزوه حذف شود؟')) return;
+                window.appData.pamphlets = window.appData.pamphlets.filter(p => p.id !== id);
+                if (window.appData.currentId === id) window.appData.currentId = window.appData.pamphlets[0]?.id || null;
+                saveData(); renderApp();
+            }
+            function toggleSidebar(show) {
+                const active = els.sidebar.classList.contains('active');
+                const state = show !== undefined ? show : !active;
+                els.sidebar.classList.toggle('active', state);
+                els.overlay.classList.toggle('active', state);
+            }
+            function createNewPamphletInternal(name) {
+                const newId = Date.now();
+                window.appData.pamphlets.push({ id: newId, name: name, notes: [] });
+                window.appData.currentId = newId;
+                saveData();
+            }
+
+            els.menuBtn.onclick = () => toggleSidebar(true);
+            els.closeSidebarBtn.onclick = () => toggleSidebar(false);
+            els.overlay.onclick = () => toggleSidebar(false);
+            els.createPamphletBtn.onclick = () => { els.modal.style.display='flex'; els.modalInput.focus(); };
+            els.cancelModalBtn.onclick = () => els.modal.style.display='none';
+            els.confirmModalBtn.onclick = () => {
+                if(els.modalInput.value.trim()) {
+                    createNewPamphletInternal(els.modalInput.value.trim());
+                    els.modal.style.display='none';
+                    els.searchInput.value = '';
+                    renderApp(); toggleSidebar(false);
+                }
+            };
+
+            // Init from Local Storage first (Waiting for Firebase Auth)
+            window.loadAppData(null);
+        });
+    </script>
+</body>
+</html>
