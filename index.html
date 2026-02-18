@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
+    <link rel="manifest" href="manifest.json">
+    
     <link rel="icon" type="image/png" href="icon.png">
-<link rel="apple-touch-icon" href="icon.png">
-<meta name="theme-color" content="#009688">
+    <link rel="apple-touch-icon" href="icon.png">
+    <meta name="theme-color" content="#009688">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>جزوه ساز مدرن پرو (متصل به گوگل)</title>
+    <title>جزوه ساز مدرن پرو (نسخه نصبی PWA)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
     
@@ -898,5 +900,13 @@
             window.loadAppData(null);
         });
     </script>
+    
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js')
+                .then(() => console.log('PWA Service Worker Registered'))
+                .catch(err => console.error('PWA Registration Failed', err));
+        }
+    </script>
 </body>
-    </html>
+</html>
