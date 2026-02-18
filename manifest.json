@@ -1,13 +1,13 @@
 {
   "name": "جزوه ساز مدرن پرو",
   "short_name": "جزوه ساز",
-  "start_url": "/jozver-ultra3/",
+  "start_url": "/jozver-ultra3/index.html",
   "scope": "/jozver-ultra3/",
-  "display": "standalone",
-  "display_override": ["window-controls-overlay", "standalone"],
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "minimal-ui"],
+  "orientation": "portrait",
   "background_color": "#009688",
   "theme_color": "#009688",
-  "orientation": "portrait",
   "icons": [
     {
       "src": "icon.png",
