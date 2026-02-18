@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "io.github.nogralism.twa",
+        "sha256_cert_fingerprints": ["2B:2D:50:64:C3:AA:FE:65:34:60:1D:9D:F3:DE:E3:FC:62:81:58:38:BA:AE:61:C3:FC:3C:23:3D:08:D6:3E:EE"]
+      }
+    }]
