@@ -3,6 +3,6 @@
       "target": {
         "namespace": "android_app",
         "package_name": "io.github.nogralism.twa",
-        "sha256_cert_fingerprints": ["81:FD:D9:23:CB:63:83:B6:08:3A:A4:35:69:48:5C:C0:13:39:9D:D0:C9:C2:08:CE:91:EE:7A:CD:82:0E:A1:4E"]
+        "sha256_cert_fingerprints": ["EB:91:6D:7D:CF:D4:58:33:C9:DA:37:80:1C:87:DE:E2:FB:5E:A9:95:FC:A3:C6:94:CE:41:BD:AA:58:1A:EE:DB"]
       }
     }]
